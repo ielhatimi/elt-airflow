@@ -21,23 +21,19 @@ default_args = {
 
 def run_elt_script():
     script_path = "/opt/airflow/elt_script/elt_script.py"
-    result = subprocess.run(
-        ["python", script_path], capture_output=True, text=True
+    subprocess.run(
+        ["python", script_path], capture_output=True, text=True, check=True
     )
-    if result.returncode != 0:
-        raise Exception(f"ELT script failed with error: {result.stderr}")
-    else:
-        print(f"ELT script completed successfully: {result.stdout}")
 
 
 dag = DAG(
     "elt_and_dag",
     default_args=default_args,
     description="ELT DAG with dbt",
-    start_date=datetime(2025, 8, 12),
+    start_date=datetime(2025, 8, 13),
     catchup=False,
 )
-# Tasks
+
 t1 = PythonOperator(
     task_id="run_elt_script",
     python_callable=run_elt_script,
@@ -47,25 +43,28 @@ t1 = PythonOperator(
 t2 = DockerOperator(
     task_id="dbt_run",
     image="ghcr.io/dbt-labs/dbt-postgres:1.4.7",
-    command=["run", "--profiles-dir", "root", "--projects-dir", "/dbt"],
+    command=["run", "--profiles-dir", "/root", "--project-dir", "/dbt"],
     auto_remove=True,
     docker_url="unix://var/run/docker.sock",
     network_mode="bridge",
     mounts=[
         Mount(
-            # source="/Users/Ismail/Library/CloudStorage/OneDrive-LAJAVANESS/Projets/Perso/data-engineering/elt-airflow/custom_postgres",
-            source=str(BASE_DIR / "postgres_transformations"),
+            source=str(
+                "/Users/Ismail/Library/CloudStorage/OneDrive-LAJAVANESS/Projets/Perso/data-engineering/etl-airflow/postgres_transformations"
+            ),
             target="/dbt",
             type="bind",
         ),
         Mount(
-            # source="/Users/Ismail/.dbt",
-            source=str(Path.home() / ".dbt"),
+            source=str("/Users/Ismail/.dbt"),
             target="/root",
             type="bind",
         ),
     ],
+    mount_tmp_dir=False,
     dag=dag,
 )
 
 t1 >> t2
+
+# t1

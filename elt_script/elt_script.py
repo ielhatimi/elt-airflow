@@ -34,7 +34,7 @@ if not wait_for_postgres(host="source_postgres"):
 if not wait_for_postgres(host="destination_postgres"):
     exit(1)
 
-print("Starting ETL process...")
+print("Starting ETL process...", flush=True)
 
 source_config = {
     "dbname": "source_db",
@@ -83,10 +83,5 @@ load_command = [
 subprocess_env = dict(PGPASSWORD=destination_config["password"])
 
 subprocess.run(load_command, env=subprocess_env, check=True)
-
-with open("/shared/etl_done.flag", "w") as f:
-    f.write("done")
-
-print("Flag file created...")
 
 print("Ending ELT script...")
