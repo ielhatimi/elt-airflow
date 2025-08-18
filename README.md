@@ -1,4 +1,4 @@
-# ETL Pipeline with Airflow, Docker & dbt
+# ELT Pipeline with Airflow, Docker & dbt
 
 This project is an ELT pipeline using Apache Airflow for orchestration. It extracts data from a PostgreSQL source, loads it into a destination database via a Python script, and applies transformations using dbt.
 
