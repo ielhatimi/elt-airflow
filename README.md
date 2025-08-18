@@ -5,7 +5,7 @@ This project is an ELT pipeline using Apache Airflow for orchestration. It extra
 ## Stack
 
 - PostgreSQL (source + destination)
-- Python ETL script (run as an Airflow task)
+- Python ELT script (run as an Airflow task)
 - dbt (for transformations)
 - Apache Airflow (for orchestration & scheduling)
 - Docker Compose (for containerized setup)
